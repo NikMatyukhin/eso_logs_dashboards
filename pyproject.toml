@@ -1,0 +1,61 @@
+[project]
+name = "eso_logs_dashboards"
+version = "0.0.1"
+description = "Default template for PDM package"
+authors = [
+    {name = "NikMatyukhin", email = "nmatryukhin@mail.ru"},
+]
+dependencies = [
+    "dash>=2.17.0",
+    "pandas>=2.2.2",
+    "sqlalchemy>=2.0.30",
+    "pydantic>=2.7.2",
+    "pydantic-settings>=2.2.1",
+    "requests-toolbelt>=1.0.0",
+    "graphql-query>=1.3.2",
+    "gql>=3.5.0",
+    "datamodel-code-generator>=0.25.6",
+]
+requires-python = "==3.12.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[project.optional-dependencies]
+mypy = [
+    "types-requests>=2.32.0.20240602",
+]
+[tool.pdm]
+distribution = false
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "black>=24.4.2",
+    "isort>=5.13.2",
+    "mypy>=1.10.0",
+    "ruff>=0.4.7",
+]
+
+[tool.mypy]
+exclude = "src/background/gql"
+plugins = [
+  "pydantic.mypy",
+]
+
+follow_imports = "silent"
+ignore_missing_imports = true
+
+check_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+
+strict_equality = true
+strict_optional = true
+
+[tool.isort]
+profile = "black"
+
+[tool.ruff]
+exclude = [".venv"]
+src = ["src", "tests"]

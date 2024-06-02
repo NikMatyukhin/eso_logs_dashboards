@@ -1,0 +1,17 @@
+stages:
+  - lint
+
+mypy:
+  extends: .lint-job
+  script:
+    - pdm run mypy .
+
+black:
+  extends: .lint-job
+  script:
+    - pdm run black . --check
+
+ruff:
+  extends: .lint-job
+  script:
+    - pdm run ruff .
