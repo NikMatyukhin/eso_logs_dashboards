@@ -1,0 +1,21 @@
+name: Linting
+run-name: ${{ github.actor }} linting code...
+on:
+  push:
+    branches:
+      - main
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup pdm
+        uses: pdm-project/setup-pdm@v4
+      - name: install dependencies
+        run: pdm install
+      - name: run black check
+        run: pdm run black . --check
+      - name: run ruff check
+        run: pdm run ruff check .
+      - name: run mypy type check
+        run: pdm run mypy .
