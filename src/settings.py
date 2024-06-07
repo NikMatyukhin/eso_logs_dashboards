@@ -32,3 +32,21 @@ class AuthSettings(BaseSettings):
 
     token_header: str
     token_type: str
+
+
+class DatabaseSettings(BaseSettings):
+    model_config = SettingsConfigDict(str_strip_whitespace=True, env_prefix="database_")
+
+    driver: str = "postgresql+psycopg2"
+    name: str
+    username: str
+    password: str
+    host: str
+
+    echo: bool = False
+
+    @property
+    def url(self) -> str:
+        return (
+            f"{self.driver}://{self.username}:{self.password}@{self.host}/{self.name}"
+        )
