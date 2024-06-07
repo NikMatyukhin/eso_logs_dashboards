@@ -1,0 +1,34 @@
+version: "3"
+
+vars:
+  RUNNER:
+    sh: 'echo {{ .RUNNER | default "" }}'
+  SOURCES: src tests main.py
+  SOURCES_ROOT: src
+
+tasks:
+  default:
+    cmd:
+      task: all
+
+  lint:
+    desc: Lint python source files
+    cmds:
+      - "{{.RUNNER}} ruff check {{.SOURCES}}"
+      - "{{.RUNNER}} black --check --diff {{.SOURCES}}"
+
+  format:
+    desc: Format python source files
+    aliases: ["fmt"]
+    cmds:
+      - "{{.RUNNER}} ruff format {{.SOURCES}}"
+      - "{{.RUNNER}} black {{ .SOURCES }}"
+
+  typecheck:
+    desc: Perform type-checking
+    cmd: "{{.RUNNER}} mypy {{.SOURCES}}"
+
+  all:
+    desc: Run the standard set of checks performed in CI
+    cmds:
+      - task: format
