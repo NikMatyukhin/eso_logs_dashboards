@@ -7,7 +7,6 @@ from .schemas import ReportData
 
 
 class ReportsFetcher(AuthenticatedFetcher):
-
     def _get_reports_operation(self) -> Operation:
         report_data = Query(
             name="reportData",
