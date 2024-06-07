@@ -7,10 +7,12 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 TSettings = TypeVar("TSettings", bound=BaseSettings)
 
 
-@functools.lru_cache
 def get_settings(cls: type[TSettings]) -> TSettings:
     dotenv.load_dotenv()
     return cls()
+
+
+get_settings = functools.lru_cache(get_settings)  # mypy moment
 
 
 class ApplicationSettings(BaseSettings):

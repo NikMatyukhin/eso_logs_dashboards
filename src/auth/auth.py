@@ -46,8 +46,8 @@ class AuthenticatedFetcher:
         if self._client is not None:
             return self._client
 
-        app_settings: ApplicationSettings = get_settings(ApplicationSettings)
-        auth_settings: AuthSettings = get_settings(AuthSettings)
+        app_settings = get_settings(ApplicationSettings)
+        auth_settings = get_settings(AuthSettings)
         auth_response = authenticate(auth_settings)
 
         transport = RequestsHTTPTransport(
