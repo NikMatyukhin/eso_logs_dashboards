@@ -1,35 +1,35 @@
-from .static import (
-    Zone,
-    Spec,
-    Gear,
-    Region,
-    Ability,
-    Encounter,
-    Partition,
-    Difficulty,
-    DamageSource,
-)
-from .actor import Actor, ActorSpecs, ActorGearSets, ActorAbilities
+from .actor import Actor, ActorAbility, ActorDeathEvent, ActorItem, ActorSpec
 from .fight import Fight
-from .report import Report, ReportDamageSources
+from .report import Report
+from .static import (
+    Ability,
+    Difficulty,
+    Encounter,
+    Item,
+    ItemSet,
+    Partition,
+    Region,
+    Spec,
+    Zone,
+)
 
 __all__ = [
     # static
     "Zone",
     "Spec",
-    "Gear",
+    "Item",
     "Region",
+    "ItemSet",
     "Ability",
     "Encounter",
     "Partition",
     "Difficulty",
-    "DamageSource",
     # dynamic
     "Actor",
     "Fight",
     "Report",
-    "ActorSpecs",
-    "ActorGearSets",
-    "ActorAbilities",
-    "ReportDamageSources",
+    "ActorSpec",
+    "ActorItem",
+    "ActorAbility",
+    "ActorDeathEvent",
 ]

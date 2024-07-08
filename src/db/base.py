@@ -1,13 +1,12 @@
-from uuid import UUID, uuid4
 from typing import Annotated
+from uuid import uuid4
 
 from sqlalchemy import MetaData
 from sqlalchemy.orm import DeclarativeBase, mapped_column
 
-
-int_pk = Annotated[int, mapped_column(primary_key=True)]
+int_pk = Annotated[int, mapped_column(primary_key=True, autoincrement=True)]
 str_pk = Annotated[str, mapped_column(primary_key=True)]
-uuid_pk = Annotated[UUID, mapped_column(primary_key=True, default_factory=uuid4)]
+uuid_pk = Annotated[str, mapped_column(primary_key=True, init=False, default=uuid4)]
 
 
 class Base(DeclarativeBase):

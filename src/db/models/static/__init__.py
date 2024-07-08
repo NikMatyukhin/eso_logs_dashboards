@@ -1,21 +1,20 @@
-from .zone import Zone
-from .spec import Spec
-from .gear import Gear
-from .region import Region
 from .ability import Ability
-from .encounter import Encounter
-from .partition import Partition
 from .difficulty import Difficulty
-from .damage_source import DamageSource
+from .encounter import Encounter
+from .item import Item, ItemSet
+from .partition import Partition
+from .region import Region
+from .spec import Spec
+from .zone import Zone
 
 __all__ = [
     "Zone",
     "Spec",
-    "Gear",
+    "Item",
     "Region",
+    "ItemSet",
     "Ability",
     "Encounter",
     "Partition",
     "Difficulty",
-    "DamageSource",
 ]

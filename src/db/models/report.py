@@ -1,22 +1,15 @@
-from datetime import time, date
+from datetime import datetime
+from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey, PrimaryKeyConstraint, CheckConstraint
+from sqlalchemy import CheckConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from db import Base, str_pk
-from db.models.static import Region, Zone, DamageSource
-from db.models.fight import Fight
-from db.models.actor import Actor
+from db import Base, int_pk
 
-
-class ReportDamageSources(Base):
-    __tablename__ = "report_damage_sources"
-    __table_args__ = (PrimaryKeyConstraint("report_code", "damage_source_id"),)
-
-    total: Mapped[int]
-
-    report_code: Mapped[str] = mapped_column(ForeignKey("report.code"))
-    damage_source_id: Mapped[int] = mapped_column(ForeignKey("damage_source.id"))
+if TYPE_CHECKING:
+    from db.models.actor import Actor
+    from db.models.fight import Fight
+    from db.models.static import Region, Zone
 
 
 class Report(Base):
@@ -25,25 +18,20 @@ class Report(Base):
         CheckConstraint(r"start_time <= end_time", "start_less_than_end"),
     )
 
-    code: Mapped[str_pk]
+    id: Mapped[int_pk]
+    code: Mapped[str]
     title: Mapped[str]
-    start_time: Mapped[date]
-    end_time: Mapped[date]
-
+    start_time: Mapped[datetime]
+    end_time: Mapped[datetime]
     trial_score: Mapped[int | None]
-    trial_time: Mapped[time | None]
+    trial_time: Mapped[datetime | None]
 
     region_id: Mapped[int] = mapped_column(ForeignKey("region.id"))
-    region: Mapped["Region"] = relationship()
+    region: Mapped["Region"] = relationship(back_populates="reports")
 
     zone_id: Mapped[int] = mapped_column(ForeignKey("zone.id"))
-    zone: Mapped["Zone"] = relationship()
+    zone: Mapped["Zone"] = relationship(back_populates="reports")
 
-    actors: Mapped["list[Actor]"] = relationship(back_populates="report")
+    actors: Mapped[list["Actor"]] = relationship(back_populates="report")
 
-    fights: Mapped["list[Fight]"] = relationship(back_populates="report")
-
-    damage_sources: Mapped["list[DamageSource]"] = relationship(
-        secondary=ReportDamageSources.__table__,
-        back_populates="reports",
-    )
+    fights: Mapped[list["Fight"]] = relationship(back_populates="report")

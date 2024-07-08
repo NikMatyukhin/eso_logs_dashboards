@@ -1,11 +1,21 @@
-from sqlalchemy.orm import Mapped
+from typing import TYPE_CHECKING
 
-from db import Base, int_pk
+from sqlalchemy.orm import Mapped, relationship
+
+from db import Base, str_pk
+from db.models.actor import ActorSpec
+
+if TYPE_CHECKING:
+    from db.models.actor import Actor
 
 
 class Spec(Base):
     __tablename__ = "spec"
 
-    id: Mapped[int_pk]
-    name: Mapped[str]
+    name: Mapped[str_pk]
     role: Mapped[str]
+
+    actors: Mapped[list["Actor"]] = relationship(
+        secondary=ActorSpec.__table__,
+        back_populates="specs",
+    )
