@@ -18,6 +18,11 @@ dependencies = [
     "alembic>=1.13.1",
     "psycopg2>=2.9.9",
     "psycopg2-binary>=2.9.9",
+    "types-pytz>=2024.1.0.20240417",
+    "bs4>=0.0.2",
+    "more-itertools>=10.3.0",
+    "apscheduler>=3.10.4",
+    "inject>=5.2.1",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
@@ -33,7 +38,6 @@ distribution = false
 
 [tool.pdm.dev-dependencies]
 dev = [
-    "black>=24.4.2",
     "isort>=5.13.2",
     "mypy>=1.10.0",
     "ruff>=0.4.7",
