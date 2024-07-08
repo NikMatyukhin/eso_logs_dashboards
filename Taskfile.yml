@@ -15,14 +15,13 @@ tasks:
     desc: Lint python source files
     cmds:
       - "{{.RUNNER}} ruff check {{.SOURCES}}"
-      - "{{.RUNNER}} black --check --diff {{.SOURCES}}"
 
   format:
     desc: Format python source files
     aliases: ["fmt"]
     cmds:
       - "{{.RUNNER}} ruff format {{.SOURCES}}"
-      - "{{.RUNNER}} black {{ .SOURCES }}"
+      - "{{.RUNNER}} isort {{.SOURCES}}"
 
   typecheck:
     desc: Perform type-checking
@@ -32,3 +31,5 @@ tasks:
     desc: Run the standard set of checks performed in CI
     cmds:
       - task: format
+      - task: lint
+      - task: typecheck
