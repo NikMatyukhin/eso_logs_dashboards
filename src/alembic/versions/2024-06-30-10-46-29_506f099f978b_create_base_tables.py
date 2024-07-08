@@ -229,7 +229,7 @@ def downgrade() -> None:
     op.drop_table("death_event")
     op.drop_table("actor_spec")
     op.drop_table("actor_item")
-    op.drop_table("actor_abilitie")
+    op.drop_table("actor_ability")
     op.drop_table("fight")
     op.drop_table("actor")
     op.drop_table("report")
