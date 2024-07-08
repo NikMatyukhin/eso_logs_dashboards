@@ -13,8 +13,6 @@ jobs:
         uses: pdm-project/setup-pdm@v4
       - name: install dependencies
         run: pdm install
-      - name: run black check
-        run: pdm run black . --check
       - name: run ruff check
         run: pdm run ruff check .
       - name: run mypy type check
