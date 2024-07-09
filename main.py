@@ -15,10 +15,12 @@ def cli() -> None:
 
 
 @cli.command()
-def start() -> None:
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(load_daily_reports_task, "cron", hour="0")
-    scheduler.start()
+@click.option("--background", is_flag=True, show_default=True, default=False)
+def start(background: bool) -> None:
+    if background:
+        scheduler = BackgroundScheduler()
+        scheduler.add_job(load_daily_reports_task, "cron", hour="0")
+        scheduler.start()
     app = create_app()
     app.run_server(debug=True)
 
