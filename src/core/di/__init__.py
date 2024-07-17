@@ -1,3 +1,3 @@
-from ._configuration import configure_inject
+from ._configuration import create_container
 
-__all__ = ("configure_inject",)
+__all__ = ("create_container",)

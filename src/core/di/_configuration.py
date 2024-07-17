@@ -1,43 +1,58 @@
+import functools
 import itertools
+from logging import Logger, getLogger
+from typing import Iterable
 
-import inject
-from sqlalchemy.orm import Session
+import aioinject
+from pydantic_settings import BaseSettings
 
 from db.engine import create_session
-from settings import ApplicationSettings, AuthSettings, DatabaseSettings
+from src.settings import (
+    ApplicationSettings,
+    AuthSettings,
+    DatabaseSettings,
+    LoadingSettings,
+    get_settings,
+)
 
-from .modules import abilities, actors, fights, items, reports, settings_provider, specs
-
-PROVIDERS = [
-    abilities.PROVIDERS,
-    actors.PROVIDERS,
-    items.PROVIDERS,
-    fights.PROVIDERS,
-    reports.PROVIDERS,
-    specs.PROVIDERS,
-]
-
+from .modules import ability, actor, fight, item, report, spec
 
 SETTINGS = (
     ApplicationSettings,
     AuthSettings,
     DatabaseSettings,
+    LoadingSettings,
 )
 
 
-def base_configuration(binder: inject.Binder) -> None:
-    """
-    Configurator described by `inject.BinderCallable` signature from python-inject `Callable[[inject.Binder], None]`
-    """
-    binder.bind_to_provider(Session, create_session)
-
-    for provided_class, provider in itertools.chain.from_iterable(PROVIDERS):
-        binder.bind_to_provider(cls=provided_class, provider=provider)
-
-    settings_provider.register_settings(binder=binder, settings_classes=SETTINGS)
+MODULES = (
+    ability.PROVIDERS,
+    actor.PROVIDERS,
+    fight.PROVIDERS,
+    item.PROVIDERS,
+    report.PROVIDERS,
+    spec.PROVIDERS,
+)
 
 
-def configure_inject() -> None:
-    inject.configure(
-        base_configuration, bind_in_runtime=True, allow_override=True, once=True
-    )
+def _register_settings(
+    container: aioinject.Container,
+    *,
+    settings_classes: Iterable[type[BaseSettings]],
+) -> None:
+    for settings_cls in settings_classes:
+        factory = functools.partial(get_settings, settings_cls)
+        container.register(aioinject.Singleton(factory, type_=settings_cls))
+
+
+def create_container() -> aioinject.Container:
+    container = aioinject.Container()
+    container.register(aioinject.Scoped(create_session))
+    container.register(aioinject.Singleton(getLogger, type_=Logger))
+
+    for provider in itertools.chain.from_iterable(MODULES):
+        container.register(provider)
+
+    _register_settings(container, settings_classes=SETTINGS)
+
+    return container
