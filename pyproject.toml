@@ -8,7 +8,7 @@ authors = [
 dependencies = [
     "dash>=2.17.0",
     "pandas>=2.2.2",
-    "sqlalchemy>=2.0.30",
+    "sqlalchemy[mypy]>=2.0.31",
     "pydantic>=2.7.2",
     "pydantic-settings>=2.2.1",
     "requests-toolbelt>=1.0.0",
@@ -22,7 +22,7 @@ dependencies = [
     "bs4>=0.0.2",
     "more-itertools>=10.3.0",
     "apscheduler>=3.10.4",
-    "inject>=5.2.1",
+    "aioinject>=0.34.0",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
@@ -41,21 +41,30 @@ dev = [
     "isort>=5.13.2",
     "mypy>=1.10.0",
     "ruff>=0.4.7",
+    "pyclean>=3.0.0",
 ]
 
 [tool.mypy]
-exclude = "src/background/gql"
 plugins = [
   "pydantic.mypy",
+  "sqlalchemy.ext.mypy.plugin",
 ]
-
+strict = true
 follow_imports = "silent"
 ignore_missing_imports = true
 
 check_untyped_defs = true
+disallow_any_generics = true
 disallow_incomplete_defs = true
 disallow_untyped_calls = true
 disallow_untyped_defs = true
+disallow_subclassing_any = false
+no_implicit_optional = true
+
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_ignores = true
 
 strict_equality = true
 strict_optional = true
@@ -65,4 +74,17 @@ profile = "black"
 
 [tool.ruff]
 exclude = [".venv"]
-src = ["src", "tests"]
+src = ["src", "tests", "main.py"]
+lint.fixable = [
+  "F",
+  "E",
+  "W",
+  "I",
+  "COM",
+  "UP",
+  "RUF",
+  "N",
+  "D",
+  "ANN",
+  "S",
+]
