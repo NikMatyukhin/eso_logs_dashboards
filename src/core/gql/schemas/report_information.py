@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import AliasPath, BaseModel, Field, field_validator
 
 
 class BaseModelWithID(BaseModel):
+    """Transform annotation class with required `id` attribute"""
     id: int
 
 
@@ -82,7 +83,7 @@ class GearItem(BaseModelWithID):
 
 
 class CombatantInfo(BaseModel):
-    stats: list
+    stats: list[object]
     talents: list[Ability] | None = None
     gear: list[GearItem] | None = None
 
@@ -100,10 +101,16 @@ class Player(BaseModelWithID):
     max_item_level: int | None = Field(None, validation_alias="maxItemLevel")
     potion_use: int = Field(..., validation_alias="potionUse")
     healthstone_use: int = Field(..., validation_alias="healthstoneUse")
-    # Can be list (!?) - just skipping players with corrupted combat information
-    combatant_info: CombatantInfo | list | None = Field(
-        None, validation_alias="combatantInfo"
-    )
+    combatant_info: CombatantInfo | None = Field(None, validation_alias="combatantInfo")
+
+    @field_validator("combatant_info")
+    @classmethod
+    def list_value_to_none(
+        cls, value: CombatantInfo | list[object] | None
+    ) -> CombatantInfo | None:
+        if isinstance(value, CombatantInfo):
+            return value
+        return None
 
 
 class PlayerDetails(BaseModel):
@@ -112,7 +119,7 @@ class PlayerDetails(BaseModel):
     dps: list[Player] | None = None
 
 
-class Details(BaseModel):
+class ReportInfo(BaseModel):
     total_time: int = Field(..., validation_alias="totalTime")
     item_level: float = Field(..., validation_alias="itemLevel")
     composition: list[CompositionItem]
@@ -125,12 +132,16 @@ class Details(BaseModel):
     game_version: int = Field(..., validation_alias="gameVersion")
 
 
-class ReportInfo(BaseModel):
-    details: Details = Field(..., validation_alias="data")
+class Details(BaseModel):
+    """Intermediary model, get rid of it during serialization"""
+
+    data: ReportInfo
 
 
 class ReportRetrieve(BaseModel):
-    report_info: ReportInfo | None = Field(None, validation_alias="table")
+    report_info: ReportInfo | None = Field(
+        None, validation_alias=AliasPath("table", "data")
+    )
     fights: list[FightInfo] | None = None
     trial_score: int | None = Field(None, validation_alias="trialScore")
     trial_time: int | None = Field(None, validation_alias="trialTime")
