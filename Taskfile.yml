@@ -27,6 +27,10 @@ tasks:
     desc: Perform type-checking
     cmd: "{{.RUNNER}} mypy {{.SOURCES}}"
 
+  clean:
+    desc: Remove all __pycache__ folders
+    cmd: "{{.RUNNER}} pyclean ."
+
   all:
     desc: Run the standard set of checks performed in CI
     cmds:
