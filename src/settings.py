@@ -50,3 +50,11 @@ class DatabaseSettings(BaseSettings):
         return (
             f"{self.driver}://{self.username}:{self.password}@{self.host}/{self.name}"
         )
+
+
+class LoadingSettings(BaseSettings):
+    model_config = SettingsConfigDict(str_strip_whitespace=True, env_prefix="loading_")
+
+    abilities_url: str
+    items_url: str
+    item_sets_url: str
