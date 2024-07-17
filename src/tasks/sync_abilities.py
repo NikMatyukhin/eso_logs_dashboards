@@ -1,12 +1,16 @@
-import click
-import inject
+from logging import Logger
+from typing import Annotated
+
+from aioinject import Inject, inject
 
 from src.domain.ability.commands import SyncAbilitiesCommand
 
 
-@inject.params(command=SyncAbilitiesCommand)
-def sync_abilities_task(command: SyncAbilitiesCommand) -> None:
-    click.echo("Running 'SyncAbilitiesCommand'...")
+@inject
+def sync_abilities_task(
+    command: Annotated[SyncAbilitiesCommand, Inject],
+    logger: Annotated[Logger, Inject],
+) -> None:
+    logger.info("Start ability synchronization task.")
     command.execute()
-
-    click.echo("Finish all tasks")
+    logger.info("Ability synchronization task finished.")

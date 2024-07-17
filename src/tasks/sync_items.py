@@ -1,17 +1,21 @@
-import click
-import inject
+from logging import Logger
+from typing import Annotated
+
+from aioinject import Inject, inject
 
 from src.domain.item.commands import SyncItemsCommand, SyncItemSetsCommand
 
 
-@inject.params(item_sets_command=SyncItemSetsCommand, items_command=SyncItemsCommand)
+@inject
 def sync_items_task(
-    item_sets_command: SyncItemSetsCommand, items_command: SyncItemsCommand
+    item_sets_command: Annotated[SyncItemSetsCommand, Inject],
+    items_command: Annotated[SyncItemsCommand, Inject],
+    logger: Annotated[Logger, Inject],
 ) -> None:
-    click.echo("Running 'SyncItemSetsCommand'...")
+    logger.info("Start item sets syncronization task.")
     item_sets_command.execute()
+    logger.info("Item sets syncronization task finished.")
 
-    click.echo("Running 'SyncItemsCommand'...")
+    logger.info("Start items syncronization task.")
     items_command.execute()
-
-    click.echo("Finish all tasks")
+    logger.info("Items syncronization task finished.")
