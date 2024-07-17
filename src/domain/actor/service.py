@@ -1,7 +1,5 @@
 from typing import Mapping
 
-import inject
-
 from core.gql.schemas import (
     CompositionItem,
     DeathEvent,
@@ -22,7 +20,8 @@ from domain.actor.repository import ActorRepository
 
 
 class ActorService:
-    _actor_repository: ActorRepository = inject.attr(ActorRepository)
+    def __init__(self, actor_repository: ActorRepository) -> None:
+        self._actor_repository = actor_repository
 
     def create_report_actors(
         self,

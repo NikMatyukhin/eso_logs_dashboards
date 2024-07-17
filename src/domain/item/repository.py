@@ -1,6 +1,5 @@
 from typing import Sequence
 
-import inject
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
@@ -10,7 +9,8 @@ from domain.item.dto import ItemDTO, ItemListDTO, ItemSetDTO, ItemSetListDTO
 
 
 class ItemRepository:
-    _session: Session = inject.attr(Session)
+    def __init__(self, session: Session) -> None:
+        self._session = session
 
     def create_item_set(self, dto: ItemSetDTO) -> ItemSet:
         model = ItemSet(
@@ -31,7 +31,7 @@ class ItemRepository:
             )
             for item_set in dto.item_sets
         ]
-        self._session.add(models)
+        self._session.add_all(models)
         self._session.flush()
 
     def create_or_update_item_sets(self, dto: ItemSetListDTO) -> None:
@@ -49,7 +49,7 @@ class ItemRepository:
             set_=dict(name=query.excluded.name),
         )
         self._session.execute(query)
-        self._session.commit()
+        self._session.flush()
 
     def create_item(self, dto: ItemDTO) -> Item:
         model = Item(
@@ -74,7 +74,7 @@ class ItemRepository:
             )
             for item in dto.items
         ]
-        self._session.add(models)
+        self._session.add_all(models)
         self._session.flush()
 
     def create_or_update_items(self, dto: ItemListDTO) -> None:
@@ -98,7 +98,7 @@ class ItemRepository:
             ),
         )
         self._session.execute(query)
-        self._session.commit()
+        self._session.flush()
 
     def get_by_id(self, item_id: int) -> Item:
         query = select(Item).where(Item.id == item_id)

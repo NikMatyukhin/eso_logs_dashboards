@@ -1,15 +1,17 @@
 from typing import Sequence
 
-import inject
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from core.date_utils import to_datetime
+from core.gql.schemas import FightInfo
 from db.models import Encounter, Fight
 from domain.fight.dto import EncounterDifficultyFilterDTO, FightDTO, FightListDTO
 
 
 class FightRepository:
-    _session: Session = inject.attr(Session)
+    def __init__(self, session: Session) -> None:
+        self._session = session
 
     def create_fight(self, dto: FightDTO) -> Fight:
         model = Fight(
@@ -24,6 +26,7 @@ class FightRepository:
         )
         self._session.add(model)
         self._session.flush()
+        self._session.refresh(model)
 
         return model
 
@@ -64,3 +67,27 @@ class FightRepository:
 
     def get_boss_encounters(self) -> Sequence[int]:
         return self._session.execute(select(Encounter.id)).scalars().all()
+
+    def build_fight_dto(
+        self,
+        report_id: int,
+        start_time: float,
+        end_time: float,
+        fights: list[FightInfo],
+    ) -> FightListDTO:
+        return FightListDTO(
+            fights=[
+                FightDTO(
+                    name=fight.name,
+                    start_time=to_datetime(start_time + fight.start_time),
+                    end_time=to_datetime(end_time + fight.end_time),
+                    average_item_level=fight.average_item_level,
+                    encounter_id=fight.encounter_id,
+                    difficulty_id=fight.difficulty_id,
+                    report_id=report_id,
+                    boss_percentage=fight.boss_percentage,
+                )
+                for fight in fights
+                if fight.encounter_id in self.get_boss_encounters()
+            ]
+        )

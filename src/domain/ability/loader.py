@@ -5,20 +5,21 @@ from typing import Generator
 import requests
 from bs4 import BeautifulSoup, Tag
 
+from src.settings import LoadingSettings
+
 from .dto import AbilityDTO, AbilityListDTO
 
 
 class AbilityLoader:
-    # TODO: APP or PARSE SETTINGS NEED HERE
-    ABILITIES_URL = "https://esolog.uesp.net/viewlog.php?"
-    ID_COLUMN_INDEX = 3
-    NAME_COLUMN_INDEX = 5
-    ITEMS_COLUMN_INDEX = 37
+    def __init__(self, settings: LoadingSettings) -> None:
+        self._settings = settings
 
     def _build_abilities_page_url(self, start_value: int = 0) -> str:
         if not start_value:
-            return self.ABILITIES_URL + urllib.parse.urlencode({"record": "skillTree"})
-        return self.ABILITIES_URL + urllib.parse.urlencode(
+            return self._settings.abilities_url + urllib.parse.urlencode(
+                {"record": "skillTree"}
+            )
+        return self._settings.abilities_url + urllib.parse.urlencode(
             {"start": str(start_value), "record": "skillTree"}
         )
 
@@ -48,7 +49,9 @@ class AbilityLoader:
 
     def get_abilities(self) -> AbilityListDTO:
         abilities_list = AbilityListDTO()
-        for ability in self._proceed_soup_table_contents(url=self.ABILITIES_URL):
+        for ability in self._proceed_soup_table_contents(
+            url=self._settings.abilities_url
+        ):
             abilities_list.abilities.append(
                 AbilityDTO(
                     id=int(ability.contents[5].text),

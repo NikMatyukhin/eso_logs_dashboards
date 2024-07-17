@@ -1,4 +1,3 @@
-import inject
 from sqlalchemy.orm import Session
 
 from db.models.actor import Actor, ActorAbility, ActorDeathEvent, ActorItem, ActorSpec
@@ -12,7 +11,8 @@ from domain.actor.dto import (
 
 
 class ActorRepository:
-    _session: Session = inject.attr(Session)
+    def __init__(self, session: Session) -> None:
+        self._session = session
 
     def create_actor_items(self, actor_items: list[CreateActorItemDTO]) -> None:
         models = (
@@ -80,6 +80,7 @@ class ActorRepository:
         )
         self._session.add(model)
         self._session.flush()
+        self._session.refresh(model)
 
         return model
 

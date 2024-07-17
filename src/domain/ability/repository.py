@@ -1,6 +1,5 @@
 from typing import Sequence
 
-import inject
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
@@ -10,7 +9,8 @@ from domain.ability.dto import AbilityDTO, AbilityListDTO
 
 
 class AbilityRepository:
-    _session: Session = inject.attr(Session)
+    def __init__(self, session: Session) -> None:
+        self._session = session
 
     def create_ability(self, dto: AbilityDTO) -> Ability:
         model = Ability(
@@ -21,6 +21,7 @@ class AbilityRepository:
         )
         self._session.add(model)
         self._session.flush()
+        self._session.refresh(model)
 
         return model
 
